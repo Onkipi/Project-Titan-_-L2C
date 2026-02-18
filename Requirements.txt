@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-dotenv
+pyjwt
+cryptography
+neo4j
+psycopg2-binary
+faiss-cpu
+rank-bm25
+requests
+pydantic
+structlog
