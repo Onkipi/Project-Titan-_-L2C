@@ -1,0 +1,38 @@
+Security Implementation Details
+🔐 Authentication
+
+JWT (short-lived)
+
+Refresh token support (extendable)
+
+Role-based access (RBAC)
+
+🔐 Encryption
+
+AES-256 symmetric encryption for:
+
+Contracts
+
+PII
+
+TLS 1.3 in production
+
+🔐 GDPR
+
+PII masking
+
+Data retention policies
+
+Right-to-be-forgotten endpoint
+
+Region-based DB partitioning (EU stored in EU)
+
+🔐 SOC2 Controls
+
+Immutable audit logs
+
+Structured logging
+
+Least privilege IAM
+
+Database activity monitoring
