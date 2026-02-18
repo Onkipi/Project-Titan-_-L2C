@@ -1,0 +1,14 @@
+from cryptography.fernet import Fernet
+import base64
+from app.core.config import settings
+
+cipher = Fernet(base64.urlsafe_b64encode(settings.AES_KEY.encode()))
+
+def encrypt_data(data: str) -> str:
+    return cipher.encrypt(data.encode()).decode()
+
+def decrypt_data(token: str) -> str:
+    return cipher.decrypt(token.encode()).decode()
+
+def mask_pii(text: str) -> str:
+    return text.replace("@", "[at]")
