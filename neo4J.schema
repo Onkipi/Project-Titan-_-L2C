@@ -1,0 +1,8 @@
+CREATE CONSTRAINT FOR (c:Customer) REQUIRE c.id IS UNIQUE;
+CREATE CONSTRAINT FOR (o:Order) REQUIRE o.id IS UNIQUE;
+
+(:Customer)-[:CREATED]->(:Opportunity)
+(:Opportunity)-[:GENERATED]->(:Quote)
+(:Quote)-[:CONVERTED_TO]->(:Order)
+(:Order)-[:PAID_BY]->(:Payment)
+(:Order)-[:GOVERNED_BY]->(:Contract)
