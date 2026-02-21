@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise L2C Platform - Lead-to-Cash System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #edf2f7;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .icon-purple { background: #f3e8ff; color: #7c3aed; }
+        .icon-blue { background: #dbeafe; color: #3b82f6; }
+        .icon-green { background: #d1fae5; color: #10b981; }
+        .icon-orange { background: #fed7aa; color: #f97316; }
+        .icon-red { background: #fecaca; color: #ef4444; }
+        .icon-teal { background: #ccfbf1; color: #14b8a6; }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a202c;
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .metric-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric-change.positive {
+            color: #10b981;
+        }
+
+        .metric-change.negative {
+            color: #ef4444;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-section h2 {
+            margin-bottom: 1.5rem;
+            color: #1a202c;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            padding: 1rem;
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table tr:hover {
+            background: #f7fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .badge-new { background: #dbeafe; color: #1e40af; }
+        .badge-qualified { background: #d1fae5; color: #065f46; }
+        .badge-proposal { background: #fed7aa; color: #9a3412; }
+        .badge-negotiation { background: #fef3c7; color: #92400e; }
+        .badge-won { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-approved { background: #d1fae5; color: #065f46; }
+        .badge-processing { background: #dbeafe; color: #1e40af; }
+        .badge-completed { background: #d1fae5; color: #065f46; }
+        .badge-paid { background: #d1fae5; color: #065f46; }
+        .badge-failed { background: #fecaca; color: #991b1b; }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+
+        .workflow-stage {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #cbd5e0;
+        }
+
+        .workflow-stage.active {
+            background: #eef2ff;
+            border-left-color: #667eea;
+        }
+
+        .workflow-stage.completed {
+            background: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .stage-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #cbd5e0;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .workflow-stage.active .stage-number {
+            background: #667eea;
+        }
+
+        .workflow-stage.completed .stage-number {
+            background: #10b981;
+        }
+
+        .stage-content {
+            flex: 1;
+        }
+
+        .stage-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stage-description {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .analytics-chart {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1a202c;
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .search-box {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .integration-status {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .integration-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .integration-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: #f7fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .integration-info h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .integration-info p {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .status-indicator.warning {
+            background: #f59e0b;
+        }
+
+        .status-indicator.error {
+            background: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .header-stats {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                overflow-x: scroll;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🏢 Enterprise L2C Platform</h1>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value">99.96%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">2.1s</div>
+                    <div class="stat-label">API Response</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">8.2M</div>
+                    <div class="stat-label">Transactions/Month</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('leads')">👥 Lead Management</button>
+            <button class="nav-tab" onclick="switchTab('opportunities')">💼 Opportunities</button>
+            <button class="nav-tab" onclick="switchTab('quotes')">📋 Quote Management</button>
+            <button class="nav-tab" onclick="switchTab('orders')">📦 Orders</button>
+            <button class="nav-tab" onclick="switchTab('payments')">💳 Payments</button>
+            <button class="nav-tab" onclick="switchTab('analytics')">📈 Analytics</button>
+            <button class="nav-tab" onclick="switchTab('integrations')">🔗 Integrations</button>
+        </div>
+
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Lead-to-Opportunity</div>
+                            <div class="metric-value">32.4%</div>
+                            <div class="metric-change positive">↑ 15.2% from target</div>
+                        </div>
+                        <div class="card-icon icon-purple">📊</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 32.4%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Quote-to-Order</div>
+                            <div class="metric-value">47.8%</div>
+                            <div class="metric-change positive">↑ 2.8% above target</div>
+                        </div>
+                        <div class="card-icon icon-blue">💼</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 47.8%"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Order Processing Time</div>
+                            <div class="metric-value">2.3m</div>
+                            <div class="metric-change positive">↓ 0.7m under target</div>
+                        </div>
+                        <div class="card-icon icon-green">⚡</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Payment Success Rate</div>
+                            <div class="metric-value">98.4%</div>
+                            <div class="metric-change positive">↑ 0.4% above target</div>
+                        </div>
+                        <div class="card-icon icon-teal">💳</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Revenue This Month</div>
+                            <div class="metric-value">$4.2M</div>
+                            <div class="metric-change positive">↑ 18.3% vs last month</div>
+                        </div>
+                        <div class="card-icon icon-orange">💰</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Data Sync Accuracy</div>
+                            <div class="metric-value">99.99%</div>
+                            <div class="metric-change positive">✓ Target achieved</div>
+                        </div>
+                        <div class="card-icon icon-green">✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Lead-to-Cash Workflow Status</h2>
+                <div class="workflow-stage completed">
+                    <div class="stage-number">1</div>
+                    <div class="stage-content">
+                        <div class="stage-title">Lead Capture</div>
+                        <div class="stage-description">Website forms, API ingestion, campaign landing pages</div>
+                    </div>
+                    <span class="badge badge-completed">Active</span>
+                </div>
+                <div class="workflow-stage completed">
+                    <div class="stage-number">2</div>
+                    <div class="stage-content">
+                        <div class="stage-title">Lead Qualification</div>
+                        <div class="stage-description">Automated scoring, AI-driven prioritization</div>
+                    </div>
+                    <span class="badge badge-completed">Active</span>
+                </div>
+                <div class="workflow-stage active">
+                    <div class="stage-number">3</div>
+                    <div class="stage-content">
+                        <div class="stage-title">Opportunity Management</div>
+                        <div class="stage-description">Deal stages, probability scoring, revenue forecasting</div>
+                    </div>
+                    <span class="badge badge-processing">Processing</span>
+                </div>
+                <div class="workflow-stage">
+                    <div class="stage-number">4</div>
+                    <div class="stage-content">
+                        <div class="stage-title">Quote Generation</div>
+                        <div class="stage-description">Dynamic pricing, discount approvals, multi-currency</div>
+                    </div>
+                    <span class="badge badge-pending">Pending</span>
+                </div>
+                <div class="workflow-stage">
+                    <div class="stage-number">5</div>
+                    <div class="stage-content">
+                        <div class="stage-title">Order Creation</div>
+                        <div class="stage-description">Order validation, inventory check, ERP sync</div>
+                    </div>
+                    <span class="badge badge-pending">Pending</span>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h2 style="margin-bottom: 1rem;">Recent Activities</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Activity</th>
+                            <th>Entity</th>
+                            <th>Status</th>
+                            <th>User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-02-21 14:32</td>
+                            <td>Order Created</td>
+                            <td>ORD-10245</td>
+                            <td><span class="badge badge-completed">Completed</span></td>
+                            <td>Sarah Johnson</td>
+                        </tr>
+                        <tr>
+                            <td>2025-02-21 14:28</td>
+                            <td>Quote Approved</td>
+                            <td>QT-7834</td>
+                            <td><span class="badge badge-approved">Approved</span></td>
+                            <td>Michael Chen</td>
+                        </tr>
+                        <tr>
+                            <td>2025-02-21 14:15</td>
+                            <td>Lead Qualified</td>
+                            <td>LD-5673</td>
+                            <td><span class="badge badge-qualified">Qualified</span></td>
+                            <td>System (AI)</td>
+                        </tr>
+                        <tr>
+                            <td>2025-02-21 14:10</td>
+                            <td>Payment Processed</td>
+                            <td>PAY-9821</td>
+                            <td><span class="badge badge-paid">Paid</span></td>
+                            <td>Payment Gateway</td>
+                        </tr>
+                        <tr>
+                            <td>2025-02-21 14:05</td>
+                            <td>Opportunity Created</td>
+                            <td>OPP-4521</td>
+                            <td><span class="badge badge-new">New</span></td>
+                            <td>David Martinez</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="leads" class="tab-content">
+            <div class="form-section">
+                <h2>Create New Lead</h2>
+                <form id="leadForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="leadFirstName">First Name *</label>
+                            <input type="text" id="leadFirstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadLastName">Last Name *</label>
+                            <input type="text" id="leadLastName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadEmail">Email *</label>
+                            <input type="email" id="leadEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadPhone">Phone</label>
+                            <input type="tel" id="leadPhone">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadCompany">Company *</label>
+                            <input type="text" id="leadCompany" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadSource">Lead Source *</label>
+                            <select id="leadSource" required>
+                                <option value="">Select source...</option>
+                                <option value="website">Website Form</option>
+                                <option value="campaign">Marketing Campaign</option>
+                                <option value="api">API Integration</option>
+                                <option value="referral">Referral</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadCampaign">Campaign ID</label>
+                            <input type="text" id="leadCampaign" placeholder="UTM Campaign">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadIndustry">Industry</label>
+                            <select id="leadIndustry">
+                                <option value="">Select industry...</option>
+                                <option value="technology">Technology</option>
+                                <option value="finance">Finance</option>
+                                <option value="healthcare">Healthcare</option>
+                                <option value="retail">Retail</option>
+                                <option value="manufacturing">Manufacturing</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="leadNotes">Notes</label>
+                        <textarea id="leadNotes"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Create Lead</button>
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('leadForm').reset()">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search leads by name, email, or company...">
+                    <button class="btn btn-primary">Search</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Lead ID</th>
+                            <th>Name</th>
+                            <th>Company</th>
+                            <th>Email</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Source</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>LD-5673</td>
+                            <td>Emily Rodriguez</td>
+                            <td>TechCorp Industries</td>
+                            <td>emily.r@techcorp.com</td>
+                            <td><strong>85</strong></td>
+                            <td><span class="badge badge-qualified">Qualified</span></td>
+                            <td>Website</td>
+                            <td>2025-02-21</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="convertToOpportunity('LD-5673')">Convert</button></td>
+                        </tr>
+                        <tr>
+                            <td>LD-5672</td>
+                            <td>James Wilson</td>
+                            <td>Global Solutions Ltd</td>
+                            <td>j.wilson@globalsol.com</td>
+                            <td><strong>72</strong></td>
+                            <td><span class="badge badge-new">New</span></td>
+                            <td>Campaign</td>
+                            <td>2025-02-21</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Qualify</button></td>
+                        </tr>
+                        <tr>
+                            <td>LD-5671</td>
+                            <td>Maria Garcia</td>
+                            <td>Innovation Partners</td>
+                            <td>maria.g@innovpart.com</td>
+                            <td><strong>91</strong></td>
+                            <td><span class="badge badge-qualified">Qualified</span></td>
+                            <td>Referral</td>
+                            <td>2025-02-20</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="convertToOpportunity('LD-5671')">Convert</button></td>
+                        </tr>
+                        <tr>
+                            <td>LD-5670</td>
+                            <td>Robert Taylor</td>
+                            <td>Enterprise Systems</td>
+                            <td>r.taylor@entsys.com</td>
+                            <td><strong>58</strong></td>
+                            <td><span class="badge badge-new">New</span></td>
+                            <td>API</td>
+                            <td>2025-02-20</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Qualify</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="opportunities" class="tab-content">
+            <div class="form-section">
+                <h2>Create New Opportunity</h2>
+                <form id="opportunityForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="oppName">Opportunity Name *</label>
+                            <input type="text" id="oppName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="oppAccount">Account *</label>
+                            <input type="text" id="oppAccount" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="oppStage">Stage *</label>
+                            <select id="oppStage" required>
+                                <option value="">Select stage...</option>
+                                <option value="prospecting">Prospecting</option>
+                                <option value="qualification">Qualification</option>
+                                <option value="proposal">Proposal</option>
+                                <option value="negotiation">Negotiation</option>
+                                <option value="closed-won">Closed Won</option>
+                                <option value="closed-lost">Closed Lost</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="oppAmount">Amount ($) *</label>
+                            <input type="number" id="oppAmount" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="oppProbability">Probability (%)</label>
+                            <input type="number" id="oppProbability" min="0" max="100" value="50">
+                        </div>
+                        <div class="form-group">
+                            <label for="oppCloseDate">Expected Close Date *</label>
+                            <input type="date" id="oppCloseDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="oppType">Type</label>
+                            <select id="oppType">
+                                <option value="new-business">New Business</option>
+                                <option value="expansion">Expansion</option>
+                                <option value="renewal">Renewal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="oppOwner">Opportunity Owner *</label>
+                            <input type="text" id="oppOwner" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="oppDescription">Description</label>
+                        <textarea id="oppDescription"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Create Opportunity</button>
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('opportunityForm').reset()">Reset</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h2 style="margin-bottom: 1rem;">Active Opportunities</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Opportunity ID</th>
+                            <th>Name</th>
+                            <th>Account</th>
+                            <th>Amount</th>
+                            <th>Stage</th>
+                            <th>Probability</th>
+                            <th>Close Date</th>
+                            <th>Owner</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>OPP-4521</td>
+                            <td>Enterprise License Renewal</td>
+                            <td>TechCorp Industries</td>
+                            <td>$125,000</td>
+                            <td><span class="badge badge-negotiation">Negotiation</span></td>
+                            <td>75%</td>
+                            <td>2025-03-15</td>
+                            <td>Sarah Johnson</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="createQuote('OPP-4521')">Create Quote</button></td>
+                        </tr>
+                        <tr>
+                            <td>OPP-4520</td>
+                            <td>New Product Suite</td>
+                            <td>Global Solutions Ltd</td>
+                            <td>$280,000</td>
+                            <td><span class="badge badge-proposal">Proposal</span></td>
+                            <td>60%</td>
+                            <td>2025-04-01</td>
+                            <td>Michael Chen</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="createQuote('OPP-4520')">Create Quote</button></td>
+                        </tr>
+                        <tr>
+                            <td>OPP-4519</td>
+                            <td>Implementation Services</td>
+                            <td>Innovation Partners</td>
+                            <td>$95,000</td>
+                            <td><span class="badge badge-qualified">Qualified</span></td>
+                            <td>40%</td>
+                            <td>2025-03-30</td>
+                            <td>David Martinez</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Update</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="quotes" class="tab-content">
+            <div class="form-section">
+                <h2>Generate Quote</h2>
+                <form id="quoteForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="quoteOpp">Opportunity *</label>
+                            <select id="quoteOpp" required>
+                                <option value="">Select opportunity...</option>
+                                <option value="OPP-4521">OPP-4521 - Enterprise License Renewal</option>
+                                <option value="OPP-4520">OPP-4520 - New Product Suite</option>
+                                <option value="OPP-4519">OPP-4519 - Implementation Services</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteValidUntil">Valid Until *</label>
+                            <input type="date" id="quoteValidUntil" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteCurrency">Currency *</label>
+                            <select id="quoteCurrency" required>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteDiscount">Discount (%)</label>
+                            <input type="number" id="quoteDiscount" min="0" max="100" value="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="quoteTax">Tax Rate (%)</label>
+                            <input type="number" id="quoteTax" min="0" max="100" value="0" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="quotePaymentTerms">Payment Terms *</label>
+                            <select id="quotePaymentTerms" required>
+                                <option value="net30">Net 30</option>
+                                <option value="net60">Net 60</option>
+                                <option value="net90">Net 90</option>
+                                <option value="immediate">Immediate</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label for="quoteNotes">Terms & Conditions</label>
+                        <textarea id="quoteNotes"></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Generate Quote</button>
+                        <button type="button" class="btn btn-secondary">Save as Draft</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h2 style="margin-bottom: 1rem;">Recent Quotes</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Quote ID</th>
+                            <th>Opportunity</th>
+                            <th>Amount</th>
+                            <th>Discount</th>
+                            <th>Status</th>
+                            <th>Valid Until</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>QT-7834</td>
+                            <td>OPP-4521</td>
+                            <td>$125,000</td>
+                            <td>5%</td>
+                            <td><span class="badge badge-approved">Approved</span></td>
+                            <td>2025-03-07</td>
+                            <td>Michael Chen</td>
+                            <td><button class="btn btn-success" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="createOrder('QT-7834')">Create Order</button></td>
+                        </tr>
+                        <tr>
+                            <td>QT-7833</td>
+                            <td>OPP-4520</td>
+                            <td>$280,000</td>
+                            <td>10%</td>
+                            <td><span class="badge badge-pending">Pending Approval</span></td>
+                            <td>2025-03-10</td>
+                            <td>Sarah Johnson</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Review</button></td>
+                        </tr>
+                        <tr>
+                            <td>QT-7832</td>
+                            <td>OPP-4519</td>
+                            <td>$95,000</td>
+                            <td>0%</td>
+                            <td><span class="badge badge-new">Draft</span></td>
+                            <td>2025-03-15</td>
+                            <td>David Martinez</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="orders" class="tab-content">
+            <div class="dashboard-grid" style="margin-bottom: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Orders Today</div>
+                            <div class="metric-value">47</div>
+                            <div class="metric-change positive">↑ 12% vs yesterday</div>
+                        </div>
+                        <div class="card-icon icon-blue">📦</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Avg Processing Time</div>
+                            <div class="metric-value">2.3m</div>
+                            <div class="metric-change positive">↓ 23% improvement</div>
+                        </div>
+                        <div class="card-icon icon-green">⚡</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Order Value Today</div>
+                            <div class="metric-value">$892K</div>
+                            <div class="metric-change positive">↑ 8.5%</div>
+                        </div>
+                        <div class="card-icon icon-orange">💰</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search orders by ID, customer, or product...">
+                    <button class="btn btn-primary">Search</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Quote Reference</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>ERP Sync</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ORD-10245</td>
+                            <td>TechCorp Industries</td>
+                            <td>QT-7834</td>
+                            <td>$118,750</td>
+                            <td><span class="badge badge-processing">Processing</span></td>
+                            <td><span class="status-indicator"></span>Synced</td>
+                            <td>2025-02-21 14:32</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>ORD-10244</td>
+                            <td>Global Solutions Ltd</td>
+                            <td>QT-7830</td>
+                            <td>$252,000</td>
+                            <td><span class="badge badge-completed">Completed</span></td>
+                            <td><span class="status-indicator"></span>Synced</td>
+                            <td>2025-02-21 11:20</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>ORD-10243</td>
+                            <td>Innovation Partners</td>
+                            <td>QT-7828</td>
+                            <td>$95,000</td>
+                            <td><span class="badge badge-completed">Completed</span></td>
+                            <td><span class="status-indicator"></span>Synced</td>
+                            <td>2025-02-20 16:45</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">View</button></td>
+                        </tr>
+                        <tr>
+                            <td>ORD-10242</td>
+                            <td>Enterprise Systems</td>
+                            <td>QT-7825</td>
+                            <td>$67,500</td>
+                            <td><span class="badge badge-processing">Processing</span></td>
+                            <td><span class="status-indicator warning"></span>Pending</td>
+                            <td>2025-02-20 14:15</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">View</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="payments" class="tab-content">
+            <div class="dashboard-grid" style="margin-bottom: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Payments Today</div>
+                            <div class="metric-value">$1.2M</div>
+                            <div class="metric-change positive">42 transactions</div>
+                        </div>
+                        <div class="card-icon icon-teal">💳</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value">98.4%</div>
+                            <div class="metric-change positive">↑ 0.4%</div>
+                        </div>
+                        <div class="card-icon icon-green">✓</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Failed Payments</div>
+                            <div class="metric-value">3</div>
+                            <div class="metric-change positive">↓ 2 from yesterday</div>
+                        </div>
+                        <div class="card-icon icon-red">⚠</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h2 style="margin-bottom: 1rem;">Payment Transactions</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Gateway</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>PAY-9821</td>
+                            <td>ORD-10245</td>
+                            <td>TechCorp Industries</td>
+                            <td>$118,750</td>
+                            <td>Credit Card</td>
+                            <td><span class="badge badge-paid">Paid</span></td>
+                            <td>Stripe</td>
+                            <td>2025-02-21 14:10</td>
+                        </tr>
+                        <tr>
+                            <td>PAY-9820</td>
+                            <td>ORD-10244</td>
+                            <td>Global Solutions Ltd</td>
+                            <td>$252,000</td>
+                            <td>Wire Transfer</td>
+                            <td><span class="badge badge-paid">Paid</span></td>
+                            <td>Bank Transfer</td>
+                            <td>2025-02-21 11:45</td>
+                        </tr>
+                        <tr>
+                            <td>PAY-9819</td>
+                            <td>ORD-10243</td>
+                            <td>Innovation Partners</td>
+                            <td>$95,000</td>
+                            <td>Credit Card</td>
+                            <td><span class="badge badge-paid">Paid</span></td>
+                            <td>PayPal</td>
+                            <td>2025-02-20 17:20</td>
+                        </tr>
+                        <tr>
+                            <td>PAY-9818</td>
+                            <td>ORD-10241</td>
+                            <td>Tech Startups Inc</td>
+                            <td>$45,000</td>
+                            <td>Credit Card</td>
+                            <td><span class="badge badge-failed">Failed</span></td>
+                            <td>Stripe</td>
+                            <td>2025-02-20 15:30</td>
+                        </tr>
+                        <tr>
+                            <td>PAY-9817</td>
+                            <td>ORD-10240</td>
+                            <td>Digital Ventures</td>
+                            <td>$89,500</td>
+                            <td>ACH</td>
+                            <td><span class="badge badge-processing">Processing</span></td>
+                            <td>Bank Transfer</td>
+                            <td>2025-02-20 13:15</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="analytics" class="tab-content">
+            <div class="analytics-chart">
+                <div class="chart-title">Revenue Forecast - Next 6 Months</div>
+                <div class="chart-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                        <div>SAP HANA Real-Time Analytics Dashboard</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #718096;">Predictive modeling with 95% accuracy</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem;">Lead Conversion Funnel</h3>
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Leads</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">1,250</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Qualified</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">625 (50%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Opportunities</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">405 (32.4%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 32.4%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Closed Won</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">187 (15%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 15%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem;">Sales Velocity Metrics</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 0.85rem; color: #718096;">Avg. Deal Size</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">$142,500</div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <div style="font-size: 0.85rem; color: #718096;">Avg. Sales Cycle</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">42 days</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.85rem; color: #718096;">Win Rate</div>
+                        <div style="font-size: 1.5rem; font-weight: bold;">46.2%</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem; font-size: 1rem;">Revenue by Region</h3>
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">North America</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">$2.4M (45%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Europe</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">$1.8M (35%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 35%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span style="font-size: 0.85rem;">Asia Pacific</span>
+                            <span style="font-size: 0.85rem; font-weight: 600;">$1.0M (20%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-chart" style="margin-top: 2rem;">
+                <div class="chart-title">Pipeline Health Analysis</div>
+                <div class="chart-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                        <div>AI-Powered Pipeline Scoring</div>
+                        <div style="font-size: 0.9rem; margin-top: 0.5rem; color: #718096;">Churn prediction & demand forecasting</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="integrations" class="tab-content">
+            <div class="integration-status">
+                <div class="integration-card">
+                    <div class="integration-logo" style="background: #00a1e0; color: white;">SF</div>
+                    <div class="integration-info">
+                        <h3>Salesforce CRM</h3>
+                        <p><span class="status-indicator"></span>Connected & Syncing</p>
+                    </div>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo" style="background: #003366; color: white;">SAP</div>
+                    <div class="integration-info">
+                        <h3>SAP HANA</h3>
+                        <p><span class="status-indicator"></span>Real-time Analytics Active</p>
+                    </div>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo" style="background: #2196f3; color: white;">ERP</div>
+                    <div class="integration-info">
+                        <h3>ERP System</h3>
+                        <p><span class="status-indicator"></span>Order Sync Enabled</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Integration Health Dashboard</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>System</th>
+                            <th>Status</th>
+                            <th>Last Sync</th>
+                            <th>Records Synced Today</th>
+                            <th>Latency</th>
+                            <th>Success Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Salesforce CRM</strong></td>
+                            <td><span class="badge badge-completed">Active</span></td>
+                            <td>2 minutes ago</td>
+                            <td>1,247</td>
+                            <td>1.8s</td>
+                            <td>99.98%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ERP System</strong></td>
+                            <td><span class="badge badge-completed">Active</span></td>
+                            <td>3 minutes ago</td>
+                            <td>892</td>
+                            <td>2.1s</td>
+                            <td>99.99%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SAP HANA</strong></td>
+                            <td><span class="badge badge-completed">Active</span></td>
+                            <td>1 minute ago</td>
+                            <td>3,456</td>
+                            <td>0.8s</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Gateway (Stripe)</strong></td>
+                            <td><span class="badge badge-completed">Active</span></td>
+                            <td>Real-time</td>
+                            <td>42</td>
+                            <td>0.5s</td>
+                            <td>98.4%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tax Engine</strong></td>
+                            <td><span class="badge badge-completed">Active</span></td>
+                            <td>Real-time</td>
+                            <td>156</td>
+                            <td>1.2s</td>
+                            <td>100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="dashboard-grid" style="margin-top: 2rem;">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">API Calls Today</div>
+                            <div class="metric-value">45,623</div>
+                            <div class="metric-change positive">Within limits</div>
+                        </div>
+                        <div class="card-icon icon-blue">🔌</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Webhook Events</div>
+                            <div class="metric-value">3,892</div>
+                            <div class="metric-change positive">All processed</div>
+                        </div>
+                        <div class="card-icon icon-purple">⚡</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="metric-label">Data Sync Accuracy</div>
+                            <div class="metric-value">99.99%</div>
+                            <div class="metric-change positive">✓ Target met</div>
+                        </div>
+                        <div class="card-icon icon-green">✓</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification">
+        <div id="notificationMessage"></div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageDiv = document.getElementById('notificationMessage');
+            
+            messageDiv.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function convertToOpportunity(leadId) {
+            showNotification(`Lead ${leadId} successfully converted to opportunity!`, 'success');
+            setTimeout(() => {
+                switchTab('opportunities');
+                document.querySelector('.nav-tab:nth-child(3)').click();
+            }, 1500);
+        }
+
+        function createQuote(oppId) {
+            showNotification(`Creating quote for opportunity ${oppId}...`, 'success');
+            setTimeout(() => {
+                switchTab('quotes');
+                document.querySelector('.nav-tab:nth-child(4)').click();
+            }, 1500);
+        }
+
+        function createOrder(quoteId) {
+            showNotification(`Order created successfully from quote ${quoteId}!`, 'success');
+            setTimeout(() => {
+                switchTab('orders');
+                document.querySelector('.nav-tab:nth-child(5)').click();
+            }, 1500);
+        }
+
+        document.getElementById('leadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification('Lead created successfully! Auto-scoring in progress...', 'success');
+            setTimeout(() => {
+                this.reset();
+            }, 2000);
+        });
+
+        document.getElementById('opportunityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = document.getElementById('oppAmount').value;
+            showNotification(`Opportunity created! Forecast amount: $${parseFloat(amount).toLocaleString()}`, 'success');
+            setTimeout(() => {
+                this.reset();
+            }, 2000);
+        });
+
+        document.getElementById('quoteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const discount = document.getElementById('quoteDiscount').value;
+            if (parseFloat(discount) > 20) {
+                showNotification('Quote generated! Discount > 20% - Approval workflow triggered.', 'success');
+            } else {
+                showNotification('Quote generated successfully!', 'success');
+            }
+            setTimeout(() => {
+                this.reset();
+            }, 2000);
+        });
+
+        setInterval(() => {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                if (stat.textContent.includes('%')) {
+                    const current = parseFloat(stat.textContent);
+                    const variation = (Math.random() - 0.5) * 0.1;
+                    const newValue = (current + variation).toFixed(2);
+                    stat.textContent = newValue + '%';
+                }
+            });
+        }, 10000);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Enterprise L2C Platform initialized');
+            console.log('System Status: All integrations operational');
+            console.log('Real-time sync: Active');
+        });
+    </script>
+</body>
+</html>
